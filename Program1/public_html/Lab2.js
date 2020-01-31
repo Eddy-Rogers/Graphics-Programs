@@ -217,7 +217,12 @@ Lab2.prototype.init = function () {
               rgbSliders[i].valueAsNumber / rgbSliders[i].max;
     }
     t.vertexData = [];
+    t.triangleData = [];
     t.pointCount = 0;
+    t.currentPointCount = 0;
+    gl.bindBuffer(gl.ARRAY_BUFFER, t.triangleCoordBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, t.vertexCoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
     
     requestAnimationFrame(render);
@@ -308,16 +313,36 @@ Lab2.prototype.init = function () {
     webGLmouseX.textContent = ((2.0 * (e.pageX - e.target.offsetLeft) / (canvas.width - 1)) - 1.0).toFixed(3);
     webGLmouseY.textContent = (1.0 - (2.0 * (e.pageY - e.target.offsetTop) / (canvas.height - 1))).toFixed(3);
     
-    if(t.mouseDown[2])
+    // If there is at least one point in the buffer, we want to draw lines between
+    //    those points and the mouse. So we add the mouse position to the buffer.
+    if(t.currentPointCount > 0)
     {
         var position = vec3(parseFloat(webGLmouseX.textContent), parseFloat(webGLmouseY.textContent), 0.0);
         var color  = t.getSliderColor();
-        t.vertexData.push(position);
-        t.vertexData.push(color);
-        t.pointCount++;
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
+        
+        // Copy the vertex data so the current position of the mouse doesn't get
+        //    permanently added to the array.
+        var vDataCopy = t.vertexData.slice(0);
+        vDataCopy.push(position);
+        vDataCopy.push(color);
+        
+        // If there are two points in the array, we want to draw lines from
+        //    point one to point two, point two to the mouse, and then
+        //    the mouse back to point one, so we add point one to the array again.
+        if(t.currentPointCount === 2){
+            vDataCopy.push(vDataCopy[0]);
+            vDataCopy.push(vDataCopy[1]);
+        }
+        
+        console.log(vDataCopy);
+        gl.bufferData(gl.ARRAY_BUFFER, flatten(vDataCopy), gl.STATIC_DRAW);  // write data to buffer
         requestAnimationFrame(render);
     }
+    
+    
+    if (this.currentPointCount > 0){
+    
+  }
   });
 
   // Kick things off with an initial rendering
@@ -365,7 +390,20 @@ Lab2.prototype.Render = function () {
   // interleaved with 3 floats for positions, starting after first position in buffer.
   gl.vertexAttribPointer(this.vColor, 3, gl.FLOAT, false, 6 * floatSize, 3 * floatSize);
   
-  
-  
   gl.drawArrays(gl.TRIANGLES, 0, this.pointCount);
+  
+  
+  // Now that we're done drawing complete triangles, draw rubber band lines
+  //    for the triangle currently being drawn.
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexCoordBuffer);
+  
+  
+  
+  gl.vertexAttribPointer(this.vPosition, 3, gl.FLOAT, false, 6 * floatSize, 0);
+  gl.vertexAttribPointer(this.vColor, 3, gl.FLOAT, false, 6 * floatSize, 3 * floatSize);
+  
+  // currentPointcount is the number of points that should be rubber-banding.
+  //    So we multiply that number by two, because one extra point is in the buffer
+  //    for each rubber-band line.
+  gl.drawArrays(gl.LINE_STRIP, 0, 2 * this.currentPointCount);
 };
