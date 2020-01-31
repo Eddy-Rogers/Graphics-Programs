@@ -285,6 +285,10 @@ Lab2.prototype.init = function () {
             var merged = [].concat.apply([], t.triangleData);
             console.log(merged);
             gl.bufferData(gl.ARRAY_BUFFER, flatten(merged), gl.STATIC_DRAW);  // write data to buffer
+            
+            //Clearing the vertex buffer
+            gl.bindBuffer(gl.ARRAY_BUFFER, t.vertexCoordBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, 96, gl.STATIC_DRAW);//96 is the max size the buffer should ever be
         }
         gl.bindBuffer(gl.ARRAY_BUFFER, t.vertexCoordBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
@@ -310,39 +314,13 @@ Lab2.prototype.init = function () {
     mouseY.textContent = e.pageY - e.target.offsetTop;
     
     //Calculate the WebGL coordinates
-    webGLmouseX.textContent = ((2.0 * (e.pageX - e.target.offsetLeft) / (canvas.width - 1)) - 1.0).toFixed(3);
-    webGLmouseY.textContent = (1.0 - (2.0 * (e.pageY - e.target.offsetTop) / (canvas.height - 1))).toFixed(3);
+    t.mouseXPos = ((2.0 * (e.pageX - e.target.offsetLeft) / (canvas.width - 1)) - 1.0).toFixed(3);
+    t.mouseYPos = (1.0 - (2.0 * (e.pageY - e.target.offsetTop) / (canvas.height - 1))).toFixed(3);
+    webGLmouseX.textContent = t.mouseXPos;
+    webGLmouseY.textContent = t.mouseYPos;
     
-    // If there is at least one point in the buffer, we want to draw lines between
-    //    those points and the mouse. So we add the mouse position to the buffer.
-    if(t.currentPointCount > 0)
-    {
-        var position = vec3(parseFloat(webGLmouseX.textContent), parseFloat(webGLmouseY.textContent), 0.0);
-        var color  = t.getSliderColor();
-        
-        // Copy the vertex data so the current position of the mouse doesn't get
-        //    permanently added to the array.
-        var vDataCopy = t.vertexData.slice(0);
-        vDataCopy.push(position);
-        vDataCopy.push(color);
-        
-        // If there are two points in the array, we want to draw lines from
-        //    point one to point two, point two to the mouse, and then
-        //    the mouse back to point one, so we add point one to the array again.
-        if(t.currentPointCount === 2){
-            vDataCopy.push(vDataCopy[0]);
-            vDataCopy.push(vDataCopy[1]);
-        }
-        
-        console.log(vDataCopy);
-        gl.bufferData(gl.ARRAY_BUFFER, flatten(vDataCopy), gl.STATIC_DRAW);  // write data to buffer
-        requestAnimationFrame(render);
-    }
-    
-    
-    if (this.currentPointCount > 0){
-    
-  }
+    if (t.currentPointCount > 0)
+      requestAnimationFrame(render);
   });
 
   // Kick things off with an initial rendering
@@ -397,7 +375,29 @@ Lab2.prototype.Render = function () {
   //    for the triangle currently being drawn.
   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexCoordBuffer);
   
-  
+  // If there is at least one point in the buffer, we want to draw lines between
+  //    those points and the mouse. So we add the mouse position to the buffer.
+  if(this.currentPointCount > 0)
+  {
+      var position = vec3(parseFloat(this.mouseXPos), parseFloat(this.mouseYPos), 0.0);
+      var color  = this.getSliderColor();
+      
+      // Copy the vertex data so the current position of the mouse doesn't get
+      //    permanently added to the array.
+      var vDataCopy = this.vertexData.slice(0);
+      vDataCopy.push(position);
+      vDataCopy.push(color);
+      
+      // If there are two points in the array, we want to draw lines from
+      //    point one to point two, point two to the mouse, and then
+      //    the mouse back to point one, so we add point one to the array again.
+      if(this.currentPointCount === 2){
+          vDataCopy.push(vDataCopy[0]);
+          vDataCopy.push(vDataCopy[1]);
+      }
+      
+      gl.bufferData(gl.ARRAY_BUFFER, flatten(vDataCopy), gl.STATIC_DRAW);  // write data to buffer
+  }
   
   gl.vertexAttribPointer(this.vPosition, 3, gl.FLOAT, false, 6 * floatSize, 0);
   gl.vertexAttribPointer(this.vColor, 3, gl.FLOAT, false, 6 * floatSize, 3 * floatSize);
