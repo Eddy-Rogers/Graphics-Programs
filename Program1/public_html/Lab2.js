@@ -4,7 +4,7 @@
  * 
  * @author Mike Goss (mikegoss@cs.du.edu)
  * 
- * Modified on 01/22/2020 by Eddy Rogers (eddy.rogers@du.edu)
+ * Modified on 02/01/2020 by Eddy Rogers (eddy.rogers@du.edu) and Declan Kahn
  */
 
 "use strict";
@@ -86,6 +86,15 @@ Lab2.prototype.init = function () {
   this.vertexCoordBuffer = gl.createBuffer();  // get unique buffer ID
   this.triangleCoordBuffer = gl.createBuffer();
   
+  //Define an alpha value and set it in the shader program
+  this.alpha = 1;
+  var colorOffset = gl.getUniformLocation(this.shaderProgram, "alpha");
+  gl.uniform1f(colorOffset, 1);
+  
+  //Enable transparency
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  
   //gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexCoordBuffer);  // make this the active buffer
   //gl.bufferData(gl.ARRAY_BUFFER, this.vertexData, gl.STATIC_DRAW);  // write data to buffer
 
@@ -139,12 +148,36 @@ Lab2.prototype.init = function () {
     return;
   }
   
+  //Get the HTML elements for the transparency buttons
+  var opaqueButton = document.getElementById(this.canvasID + "-opaque-button");
+  var transparentButton = document.getElementById(this.canvasID + "-transparent-button");
+  
+  //Add event listeners for the transparency buttons
+  opaqueButton.addEventListener("click", transparencyCallback);
+  transparentButton.addEventListener("click", transparencyCallback);
+  
+  //Callback function for transparency buttons, which change the alpha value in the object and in the shader program
+  function transparencyCallback() {
+      if (this.id === t.canvasID + "-opaque-button") {
+          t.alpha = 1;
+      }
+      else if (this.id === t.canvasID + "-transparent-button") {
+          t.alpha = 0.5;
+      }
+      //Set the alpha value
+      var colorOffset = gl.getUniformLocation(t.shaderProgram, "alpha");
+      gl.uniform1f(colorOffset, t.alpha);
+      //Render a frame
+      requestAnimationFrame(render);
+  }
+  
+  //List of the colors you can set the verteces to
   this.sampleColors = ["white", "black", "red", "green", "blue", "cyan", "magenta", "yellow"];
   var colorButtons = [];
+  //Get each button, and add a callback function which changes the program values
   for(var i in this.sampleColors) {
       var sampleColor = this.sampleColors[i];
       
-      console.log(this.canvasID + "-" + sampleColor + "-button");
       var buttonElement = document.getElementById(this.canvasID + "-" + sampleColor + "-button");
       
       colorButtons[sampleColor] = buttonElement;
@@ -204,6 +237,7 @@ Lab2.prototype.init = function () {
         for(var i in t.rgbSliders){
             t.rgbSliders[i].valueDisplay.textContent = t.rgbSliders[i].valueAsNumber;
         }
+        //Render a frame
         requestAnimationFrame(render);
       });
   }
@@ -216,10 +250,12 @@ Lab2.prototype.init = function () {
       rgbSliders[i].valueDisplay.textContent =
               rgbSliders[i].valueAsNumber / rgbSliders[i].max;
     }
+    //Reset all of our data
     t.vertexData = [];
     t.triangleData = [];
     t.pointCount = 0;
     t.currentPointCount = 0;
+    //Write the empty arrays to both buffers
     gl.bindBuffer(gl.ARRAY_BUFFER, t.triangleCoordBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, t.vertexCoordBuffer);
@@ -300,13 +336,6 @@ Lab2.prototype.init = function () {
   canvas.addEventListener("mouseup", function (e) {
     t.mouseDown[e.button] = false;
     mouseButton.textContent = t.mouseDown;
-//    var position = vec3(parseFloat(webGLmouseX.textContent), parseFloat(webGLmouseY.textContent), 0.0);
-//    var color  = t.getSliderColor();
-//    t.vertexData.push(position);
-//    t.vertexData.push(color);
-//    t.pointCount++;
-//    gl.bufferData(gl.ARRAY_BUFFER, flatten(t.vertexData), gl.STATIC_DRAW);  // write data to buffer
-//    requestAnimationFrame(render);
   });
   
   canvas.addEventListener("mousemove", function (e) {

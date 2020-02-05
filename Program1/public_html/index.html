@@ -2,7 +2,7 @@
 <!--
 Lab 2 - COMP3801 Winter 2020
   Basic WebGL2 shaders, mouse events and coordinates
-    Modified on 01/22/2020 by Eddy Rogers (eddy.rogers@du.edu)
+    Modified on 01/22/2020 by Eddy Rogers (eddy.rogers@du.edu) and Declan Kahn
 -->
 <html>
   <head>
@@ -51,32 +51,26 @@ Lab 2 - COMP3801 Winter 2020
         </tr>
       </table>
       <button id="lab2-canvas-reset-button">Reset</button>
-      <table border="1">
-      <tr style="background-color: white; color: white">
-          <td><button id="lab2-canvas-white-button">white</button>
+      <table border="1" style = "border-radius: 4px">
+      <tr style = "border-radius: 4px">
+          <td style="border-radius: 4px; background-color: white"><button id="lab2-canvas-white-button">>white</button>
+          <td style="border-radius: 4px; background-color: black; color: white"><button id="lab2-canvas-black-button">>black</button>
       </tr>
-      <tr style="background-color: black; color: white">
-          <td><button id="lab2-canvas-black-button">black</button>
+      <tr style = "border-radius: 4px">
+          <td style="border-radius: 4px; background-color: red"><button id="lab2-canvas-red-button">>red</button>
+          <td style="border-radius: 4px; background-color: green"><button id="lab2-canvas-green-button">>green</button>
       </tr>
-      <tr style="background-color: red; color: white">
-          <td><button id="lab2-canvas-red-button">red</button>
-      </tr>
-      <tr style="background-color: green; color: white">
-          <td><button id="lab2-canvas-green-button">green</button>
-      </tr>
-      <tr style="background-color: blue; color: white">
-          <td><button id="lab2-canvas-blue-button">blue</button>
-      </tr>
-      <tr style="background-color: cyan; color: white">
-          <td><button id="lab2-canvas-cyan-button">cyan</button>
-      </tr>
-      <tr style="background-color: magenta; color: white">
-          <td><button id="lab2-canvas-magenta-button">magenta</button>
-      </tr>
-      <tr style="background-color: yellow; color: white">
-          <td><button id="lab2-canvas-yellow-button">yellow</button>
-      </tr>
+      <tr style = "border-radius: 4px">
+          <td style="border-radius: 4px; background-color: blue"><button id="lab2-canvas-blue-button">>blue</button>
+          <td style="border-radius: 4px; background-color: cyan"><button id="lab2-canvas-cyan-button">>cyan</button>
+      <tr style = "border-radius: 4px">
+          <td style="border-radius: 4px; background-color: magenta"><button id="lab2-canvas-magenta-button">>magenta</button>
+          <td style="border-radius: 4px; background-color: yellow"><button id="lab2-canvas-yellow-button">>yellow</button>
       </table>
+      <div>
+          <button id="lab2-canvas-opaque-button" style="border-radius: 4px; background-color: whitesmoke">opaque</button>
+          <button id="lab2-canvas-transparent-button" style="border-radius: 4px; background-color: whitesmoke">transparent</button>
+      </div>
     </div>
   </body>
 </html>
