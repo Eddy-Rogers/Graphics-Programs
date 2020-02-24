@@ -1,0 +1,40 @@
+{
+  "camera" : {
+    "location" : [ -10, -10, 15 ],
+    "lookAt" : [ 0.0, 0.0, 0.0 ],
+    "approxUp" : [ 0.0, 1.0, 0.0 ],
+    "FOVdeg" : 45.0,
+    "near" : 0.1,
+    "far" : 50.0,
+    "perspective" : true
+  },
+  "bgColor" : [ 0.2, 0.2, 0.4, 1.0 ],
+  "collisionDistance" : 2.5,
+  "animationStep" : 60.0,
+  "models": [
+     {
+      "modelURL" : "Torus.json",
+      "location" : [ 2.5, 7.0, -2.0 ],
+      "scale" : [ 0.5, 0.5, 0.5 ],
+      "yBasis" : [  0.70711,  -0.70711,   0.00000 ],
+      "zBasis" : [  0.57735,   0.57735,   0.57735 ],
+      "xBasis" : [ -0.40825,  -0.40825,   0.81650 ]
+    },
+   {
+      "modelURL" : "ColorCube.json",
+      "location" : [ 5, 5, 5 ],
+      "scale" : [ 2.0, 2.0, 2.0 ],
+      "xBasis" : [  0.70711,  -0.70711,   0.00000 ],
+      "yBasis" : [  0.57735,   0.57735,   0.57735 ],
+      "zBasis" : [ -0.40825,  -0.40825,   0.81650 ]
+    },
+    {
+      "modelURL" : "ColorCube.json",
+      "location" : [ -5, -5, -5 ],
+      "scale" : [ 2.0, 2.0, 2.0 ],
+      "yBasis" : [  0.70711,  -0.70711,   0.00000 ],
+      "zBasis" : [  0.57735,   0.57735,   0.57735 ],
+      "xBasis" : [ -0.40825,  -0.40825,   0.81650 ]
+    }
+  ]
+}
