@@ -16,6 +16,8 @@
  * 
  * @param canvasID - string ID of canvas in which to render
  * @param sceneURL - URL of JSON file containing scene definition
+ * 
+ * Modified by Eddy Rogers and Declan Kahn on 02/20/2020
  */
 
 function Scene(canvasID, sceneURL) {
@@ -134,7 +136,7 @@ function Scene(canvasID, sceneURL) {
             this.zLoc = (jScene.models[1].location[2] + jScene.models[2].location[2]) / 2;
 
             this.yBase = (normalize(subtract(jScene.models[1].location, vec3(this.xLoc, this.yLoc, this.zLoc))));
-            this.zBase = vec3(0, 0, 1);
+            this.zBase = cross(vec3(0, 0, 1), this.yBase);
             this.xBase = cross(this.yBase, this.zBase);
 
             this.currentX = this.xLoc;
@@ -211,15 +213,9 @@ Scene.prototype.Render = function () {
         matrixStack.MultMatrix(rotateY((this.currentRotationY + this.totalRotationY) * 90));
         matrixStack.MultMatrix(translate(-lookAtPoint[0], -lookAtPoint[1], -lookAtPoint[2]));
 
-
-        // @EDDY ROGERS
-        // This code is supposed to check if the object's distance to the target is less than the collision distance
-        // and reverse the path of the animation.
-        // Right now the switch is hard coded, and the object does not flip around like it is supposed to
         if (i === 0) {
             if (this.animationDirection) {
                 distance = length(subtract(this.jScene.models[1].location, vec3(this.currentX, this.currentY, this.currentZ)));
-                console.log(distance);
                 if (distance <= this.collisionDistance) {
                     this.animationDirection = false;
                 }
