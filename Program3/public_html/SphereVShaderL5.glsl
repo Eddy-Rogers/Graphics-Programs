@@ -7,6 +7,8 @@ in vec4 vNormal;
 in vec4 vSpecular;
 in float vShininess;
 
+in vec2 vTexCoord;
+
 // Light information.  Four lights are supported.  Light positions are
 // stored in a mat4, one light position per row. If the last (w) coordinate
 // of the light position is 0, it is treated as a directional light source.
@@ -25,6 +27,8 @@ out vec4 fSpecular;         // specular reflectivity
 out float fShininess;       // shininess coeff (beta)
 out vec4 fNormal;           // surface normal vector
 
+out vec2 fTexCoord;
+
 // The light direction and halfway vectors have one per light source.  We
 // pack these into mat4, one per row
 out mat4 fLightHalfway;     // halfway vector
@@ -32,6 +36,8 @@ out mat4 fLightDir;         // light direction vector
 
 void main()
 {
+  fTexCoord = vTexCoord;
+
   vec4 normal = vec4(vNormal.xyz, 0.0);  // make sure last coord is 0
 
   // Transform the position and normal vector to viewing coord

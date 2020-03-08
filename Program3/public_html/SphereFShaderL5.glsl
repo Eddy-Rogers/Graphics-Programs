@@ -12,6 +12,8 @@ uniform mat4 fLightSpecular;
 // fLightOn is non-zero to use the light, 0 to ignore it.
 uniform vec4 fLightOn;
 
+uniform sampler2D fTexSampler;
+
 // Interpolated input values from vertex shader
 in vec4 fNormal;
 in mat4 fLightDir;
@@ -19,13 +21,15 @@ in vec4 fSpecular;
 in mat4 fLightHalfway;
 in float fShininess;
 
+in vec2 fTexCoord;
+
 out vec4 fragColor;
 
 void main()
 {
   vec4 shade = vec4(0.0, 0.0, 0.0, 0.0);     // initialize shade sum
   vec4 normal = normalize(fNormal);          // must normalize interpolated vector
-  vec4 fDiffuse = vec4(1.0, 1.0, 1.0, 1.0);  // use white as diffuse color
+  vec4 fDiffuse = texture(fTexSampler, fTexCoord);  // use texture value as diffuse reflectance
   
   for (int i = 0; i < 4; ++i) {
     if (fLightOn[i] != 0.0) {

@@ -131,10 +131,10 @@ Sphere.prototype.BuildSphere = function() {
   gl.bufferData( gl.ARRAY_BUFFER, flatten(vertexCoords), gl.STATIC_DRAW );
 
   // Initialize the vertex position attribute from the vertex shader.
-  // For a unit sphere, the vertex normal is the same as the vertex position.
-  // The position is equivalent to the unit vector from the center (the origin)
-  // to the vertex.  We take advantage of this by using the same buffer for
-  // the normal as for the vertex position.
+  //   // For a unit sphere, the vertex normal is the same as the vertex position.
+  //   // The position is equivalent to the unit vector from the center (the origin)
+  //   // to the vertex.  We take advantage of this by using the same buffer for
+  //   // the normal as for the vertex position.
   this.vPosition = gl.getAttribLocation(this.shaderProgram, "vPosition");
   this.vNormal = gl.getAttribLocation(this.shaderProgram, "vNormal");
   gl.enableVertexAttribArray(this.vPosition);
