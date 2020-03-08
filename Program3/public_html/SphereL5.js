@@ -41,6 +41,9 @@ function Sphere(modelName, gl, constructorParams) {
   this.fLightAmbient = gl.getUniformLocation(shaderProgram, "fLightAmbient");
   this.fLightSpecular = gl.getUniformLocation(shaderProgram, "fLightSpecular");
   this.fLightOn = gl.getUniformLocation(shaderProgram, "fLightOn");
+  this.fTexSampler = gl.getUniformLocation(shaderProgram, "fTexSampler");
+  
+  this.InitTexture("mar0kuu2.jpg");
 };
 
 // Initial 3D vertices of octahedron approximating
@@ -117,6 +120,19 @@ Sphere.prototype.BuildSphere = function() {
     vertexCoords = nextVertexCoords;
     numVertices = vertexCoords.length;
   }
+  
+  // Calculate texture coordinates
+  var textureCoords = [];
+    
+    for(var i = 0; i < vertexCoords.length; ++i){
+        var t = (Math.asin(vertexCoords[i].z) / Math.PI) + 0.5;
+        var s = 0.0;
+        if (vertexCoords[i].z > -1.0 && vertexCoords[i].z < 1.0) {
+            s = (Math.atan2(vertexCoords[i].y, vertexCoords[i].x) / Math.PI) * 0.5 + 0.5;
+        }
+        textureCoords.push(vec2(s,t));
+    }
+  
   this.numVertices = numVertices;
 
   // Create a Vertex Array Object.  This remembers the buffer bindings and
@@ -141,6 +157,16 @@ Sphere.prototype.BuildSphere = function() {
   gl.enableVertexAttribArray(this.vNormal);
   gl.vertexAttribPointer(this.vPosition, 3, gl.FLOAT, false, 0, 0);
   gl.vertexAttribPointer(this.vNormal, 3, gl.FLOAT, false, 0, 0);
+  
+  // Create buffer for texture coords
+  this.textureCoordBuffer = gl.createBuffer();
+  gl.bindBuffer( gl.ARRAY_BUFFER, this.textureCoordBuffer );
+  gl.bufferData( gl.ARRAY_BUFFER, flatten(textureCoords), gl.STATIC_DRAW );
+  
+  // Initialize the texture coordinate attribute from the vertex shader
+  this.vTexCoord = gl.getAttribLocation(this.shaderProgram, "vTexCoord");
+  gl.enableVertexAttribArray(this.vTexCoord);
+  gl.vertexAttribPointer(this.vTexCoord, 2, gl.FLOAT, false, 0, 0);
 
   // Build reflectance values
   var vertexSpecularReflectance = [];
@@ -225,6 +251,7 @@ Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions
   gl.uniformMatrix4fv(this.fLightAmbient, false, flatten(lightAmbientMat));
   gl.uniformMatrix4fv(this.fLightSpecular, false, flatten(lightSpecularMat));
   gl.uniform4fv(this.fLightOn, flatten(lightOn));
+  gl.uniform1i(this.fTexSampler, 0);
 
   // Draw triangle faces
   if (!showEdges) {
@@ -239,4 +266,34 @@ Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions
   
   // Restore previous backface cull setting
   if (!prevCull) gl.disable(gl.CULL_FACE);
+};
+
+/**
+ * InitTexture - load and initialize texture
+ * 
+ * @param {string} textureURL location of texture file
+ */
+Sphere.prototype.InitTexture = function(textureURL) {
+  // Load the texture (with generated mipmaps)
+  this.textureLoaded = false;
+  var gl = this.gl;
+  var texture = this.texture = gl.createTexture();
+  var textureImage = new Image();
+  var t = this;
+  
+  // Set up function to run asynchronously after texture image loads
+  textureImage.onload = function() {
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureImage);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, t.magFilterSetting);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, t.minFilterSetting);
+    gl.generateMipmap(gl.TEXTURE_2D);
+    t.textureLoaded = true;  // flag texture load complete
+  };
+  
+  textureImage.src = textureURL;  // start load of texture image
 };
