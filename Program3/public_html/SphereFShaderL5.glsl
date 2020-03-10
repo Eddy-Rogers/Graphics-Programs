@@ -50,7 +50,7 @@ void main()
       
                 
         // Diffuse reflectance
-        vec4 diffLight = fLightDiffuse[i] * dot(normal, normalLightDir[i]);
+        vec4 diffLight = fLightDiffuse[i] * fDiffuse * dot(normal, normalLightDir[i]);
         if (diffLight.r > 0.0 && diffLight.g >= 0.0 && diffLight.b >= 0.0)
             shade += diffLight;
                 

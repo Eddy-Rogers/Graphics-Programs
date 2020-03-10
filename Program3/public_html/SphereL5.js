@@ -125,10 +125,10 @@ Sphere.prototype.BuildSphere = function() {
   var textureCoords = [];
     
     for(var i = 0; i < vertexCoords.length; ++i){
-        var t = (Math.asin(vertexCoords[i].z) / Math.PI) + 0.5;
+        var t = (Math.asin(vertexCoords[i][2]) / Math.PI) + 0.5;
         var s = 0.0;
-        if (vertexCoords[i].z > -1.0 && vertexCoords[i].z < 1.0) {
-            s = (Math.atan2(vertexCoords[i].y, vertexCoords[i].x) / Math.PI) * 0.5 + 0.5;
+        if (vertexCoords[i][2] > -1.0 && vertexCoords[i][2] < 1.0) {
+            s = (Math.atan2(vertexCoords[i][1], vertexCoords[i][0]) / Math.PI) * 0.5 + 0.5;
         }
         textureCoords.push(vec2(s,t));
     }
@@ -289,8 +289,8 @@ Sphere.prototype.InitTexture = function(textureURL) {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureImage);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, t.magFilterSetting);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, t.minFilterSetting);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.generateMipmap(gl.TEXTURE_2D);
     t.textureLoaded = true;  // flag texture load complete
   };
