@@ -42,6 +42,8 @@ function Sphere(modelName, gl, constructorParams) {
   this.fLightSpecular = gl.getUniformLocation(shaderProgram, "fLightSpecular");
   this.fLightOn = gl.getUniformLocation(shaderProgram, "fLightOn");
   this.fTexSampler = gl.getUniformLocation(shaderProgram, "fTexSampler");
+  this.fogColor = gl.getUniformLocation(shaderProgram, "fogColor");
+  this.fogOnGL = gl.getUniformLocation(shaderProgram, "fogOn");
   
   this.InitTexture("mar0kuu2.jpg");
 };
@@ -196,7 +198,7 @@ Sphere.prototype.BuildSphere = function() {
 
 /**
  * Redraw - called from window redraw callback to clear and redraw window
- * 
+ *
  * @param matrixStack the current MatrixStack object
  * @param projectionMatrix the current projection matrix (mat4)
  * @param lightPositions array of vec4 light positions in viewing coords
@@ -204,10 +206,13 @@ Sphere.prototype.BuildSphere = function() {
  * @param ambientIntensities array of vec3 light source ambient intensities
  * @param specularIntensities array of vec3 light source ambient intensities
  * @param showEdges false to draw filled triangles, true for wireframe
+ * @param fogOn whether or not to use fog
  */
 Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions,
-    diffuseIntensities, ambientIntensities, specularIntensities, showEdges) {
+    diffuseIntensities, ambientIntensities, specularIntensities, showEdges, fogOn) {
   var gl = this.gl;
+
+  this.fogOn = fogOn;
   
   // Turn on backface culling (save previous setting)
   var prevCull = gl.isEnabled(gl.CULL_FACE);
@@ -252,6 +257,8 @@ Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions
   gl.uniformMatrix4fv(this.fLightSpecular, false, flatten(lightSpecularMat));
   gl.uniform4fv(this.fLightOn, flatten(lightOn));
   gl.uniform1i(this.fTexSampler, 0);
+  gl.uniform4fv(this.fogColor, vec4(0.0, 0.0, 0.0, 1.0));
+  gl.uniform1i(this.fogOnGL, this.fogOn);
 
   // Draw triangle faces
   if (!showEdges) {

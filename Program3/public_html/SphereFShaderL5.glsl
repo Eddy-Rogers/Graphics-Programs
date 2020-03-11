@@ -8,6 +8,9 @@ uniform mat4 fLightDiffuse;
 uniform mat4 fLightAmbient;
 uniform mat4 fLightSpecular;
 
+uniform vec4 fogColor;
+uniform bool fogOn;
+
 // Light on/off information for the 4 light sources.  For light i,
 // fLightOn is non-zero to use the light, 0 to ignore it.
 uniform vec4 fLightOn;
@@ -30,6 +33,8 @@ void main()
   vec4 shade = vec4(0.0, 0.0, 0.0, 0.0);     // initialize shade sum
   vec4 normal = normalize(fNormal);          // must normalize interpolated vector
   vec4 fDiffuse = texture(fTexSampler, fTexCoord);  // use texture value as diffuse reflectance
+
+  float depth = gl_FragCoord.z;
   
   for (int i = 0; i < 4; ++i) {
     if (fLightOn[i] != 0.0) {
@@ -62,5 +67,8 @@ void main()
     }
   }
   shade.a = 1.0;
+
+  shade = (shade * (pow(2.7, 0.0 - pow(depth, 2.0)))) + (fogColor * (1.0 - (pow(2.7, 0.0 - pow(depth, 2.0)))));
+
   fragColor = shade;
 }

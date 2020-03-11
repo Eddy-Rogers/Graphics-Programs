@@ -36,7 +36,7 @@
         </tr>
         <tr>
           <td><label for="gl-canvas-near-slider">Near</label></td>
-          <td><input id="gl-canvas-near-slider" type="range" min="0.1" max="40.0" step="0.01"
+          <td><input id="gl-canvas-near-slider" type="range" min="0.1" max="10.0" step="0.01"
                      style="width:300px"
                      onchange="SliderUpdate('gl-canvas-near-slider-output', value)"
                      oninput="SliderUpdate('gl-canvas-near-slider-output', value)"/></td>
@@ -88,6 +88,7 @@
         Show edges<input type="checkbox" id="gl-canvas-show-edges" /><br />
         <br />
         <button type="button" onclick="globalScene.ResetCamera()">Reset Scene</button>
+        <button type="button" onclick="globalScene.ToggleFog()">Toggle Fog</button>
       </div>
     </div>
   </body>

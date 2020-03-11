@@ -87,6 +87,8 @@ function Scene(canvasID, sceneURL) {
   
   this.showEdgesCheckBoxID = canvasID + "-show-edges";
   this.showEdgesCheckBox = document.getElementById(this.showEdgesCheckBoxID);
+
+  this.fogOn = true;
   
   // Get the initial camera parameters (copy values so we can change them
   // without modifying the jScene object, we might want the original values
@@ -192,13 +194,17 @@ Scene.prototype.Redraw = function() {
     matrixStack.MultMatrix(transform);
     this.loadedModels[i].Redraw(matrixStack, projection, lightsViewCoords,
                                 this.lightDiffuse, this.lightAmbient,
-                                this.lightSpecular, showEdges);
+                                this.lightSpecular, showEdges, this.fogOn);
     matrixStack.PopMatrix();
   }
   
   var t = this;
   requestAnimationFrame(function() { t.Redraw(); } );
 };
+
+Scene.prototype.ToggleFog = function() {
+  this.fogOn = !this.fogOn;
+}
 
 Scene.prototype.ResetCamera = function() {
   // Copy the camera parameters from the jScene object.  The copy's values
