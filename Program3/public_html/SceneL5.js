@@ -87,8 +87,14 @@ function Scene(canvasID, sceneURL) {
   
   this.showEdgesCheckBoxID = canvasID + "-show-edges";
   this.showEdgesCheckBox = document.getElementById(this.showEdgesCheckBoxID);
+  
+  this.fogCheckBoxID = canvasID + "-fog";
+  this.fogCheckBox = document.getElementById(this.fogCheckBoxID);
+  
+  this.procTexCheckBoxID = canvasID + "-proc-texture";
+  this.procTexCheckBox = document.getElementById(this.procTexCheckBoxID);
 
-  this.fogOn = true;
+  this.time = 0;
   
   // Get the initial camera parameters (copy values so we can change them
   // without modifying the jScene object, we might want the original values
@@ -177,6 +183,9 @@ Scene.prototype.Redraw = function() {
   }
   
   var showEdges = this.showEdgesCheckBox.checked;
+  var fogOn = this.fogCheckBox.checked;
+  var procTexture = this.procTexCheckBox.checked;
+  this.time += 1;
   
   // Render each loaded object with its transform
   for (var i = 0; i < this.loadedModels.length; ++i) {
@@ -194,7 +203,8 @@ Scene.prototype.Redraw = function() {
     matrixStack.MultMatrix(transform);
     this.loadedModels[i].Redraw(matrixStack, projection, lightsViewCoords,
                                 this.lightDiffuse, this.lightAmbient,
-                                this.lightSpecular, showEdges, this.fogOn);
+                                this.lightSpecular, showEdges, 
+                                fogOn, procTexture, (this.time / 50));
     matrixStack.PopMatrix();
   }
   
@@ -202,9 +212,6 @@ Scene.prototype.Redraw = function() {
   requestAnimationFrame(function() { t.Redraw(); } );
 };
 
-Scene.prototype.ToggleFog = function() {
-  this.fogOn = !this.fogOn;
-}
 
 Scene.prototype.ResetCamera = function() {
   // Copy the camera parameters from the jScene object.  The copy's values
@@ -237,4 +244,6 @@ Scene.prototype.ResetCamera = function() {
 
   this.perspectiveCheckBox.checked = this.camera.perspective;
   this.showEdgesCheckBox.checked = false;
+  this.fogCheckBox.checked = true;
+  this.procTexCheckBox.checked = true;
 };

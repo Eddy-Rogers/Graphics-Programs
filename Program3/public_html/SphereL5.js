@@ -44,6 +44,8 @@ function Sphere(modelName, gl, constructorParams) {
   this.fTexSampler = gl.getUniformLocation(shaderProgram, "fTexSampler");
   this.fogColor = gl.getUniformLocation(shaderProgram, "fogColor");
   this.fogOnGL = gl.getUniformLocation(shaderProgram, "fogOn");
+  this.procTexOn = gl.getUniformLocation(shaderProgram, "procTexOn");
+  this.fTimeGL = gl.getUniformLocation(shaderProgram, "fTime");
   
   this.InitTexture("mar0kuu2.jpg");
 };
@@ -207,12 +209,14 @@ Sphere.prototype.BuildSphere = function() {
  * @param specularIntensities array of vec3 light source ambient intensities
  * @param showEdges false to draw filled triangles, true for wireframe
  * @param fogOn whether or not to use fog
+ * @param procTexture false to use mars texture, true to use procedural texture
+ * @param time an int between 0 and 359 that should increment (or go from 359 to 0) every call of redraw
  */
 Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions,
-    diffuseIntensities, ambientIntensities, specularIntensities, showEdges, fogOn) {
+    diffuseIntensities, ambientIntensities, specularIntensities, showEdges, 
+    fogOn, procTexture, time) {
   var gl = this.gl;
 
-  this.fogOn = fogOn;
   
   // Turn on backface culling (save previous setting)
   var prevCull = gl.isEnabled(gl.CULL_FACE);
@@ -258,7 +262,9 @@ Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions
   gl.uniform4fv(this.fLightOn, flatten(lightOn));
   gl.uniform1i(this.fTexSampler, 0);
   gl.uniform4fv(this.fogColor, vec4(0.0, 0.0, 0.0, 1.0));
-  gl.uniform1i(this.fogOnGL, this.fogOn);
+  gl.uniform1i(this.fogOnGL, fogOn);
+  gl.uniform1i(this.procTexOn, procTexture);
+  gl.uniform1f(this.fTimeGL, time);
 
   // Draw triangle faces
   if (!showEdges) {
