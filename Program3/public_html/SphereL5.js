@@ -210,7 +210,7 @@ Sphere.prototype.BuildSphere = function() {
  * @param showEdges false to draw filled triangles, true for wireframe
  * @param fogOn whether or not to use fog
  * @param procTexture false to use mars texture, true to use procedural texture
- * @param time an int between 0 and 359 that should increment (or go from 359 to 0) every call of redraw
+ * @param time a float between 0 and 360 that slowly increases as time passes
  */
 Sphere.prototype.Redraw = function(matrixStack, projectionMatrix, lightPositions,
     diffuseIntensities, ambientIntensities, specularIntensities, showEdges, 

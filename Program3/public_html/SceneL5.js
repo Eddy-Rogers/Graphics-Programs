@@ -185,7 +185,7 @@ Scene.prototype.Redraw = function() {
   var showEdges = this.showEdgesCheckBox.checked;
   var fogOn = this.fogCheckBox.checked;
   var procTexture = this.procTexCheckBox.checked;
-  this.time += 1;
+  this.time = (this.time + 1) % 18000;
   
   // Render each loaded object with its transform
   for (var i = 0; i < this.loadedModels.length; ++i) {
