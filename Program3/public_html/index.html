@@ -1,8 +1,23 @@
 <!DOCTYPE html>
 <!--
-  COMP3801 Winter 2020 Lab 5 - Lighting
+    @author Eddy Rogers
+    @author Declan Kahn
 
-  @author Mike Goss <mikegoss@cs.du.edu>
+    Please excuse all the file names being for lab 5, we used that code as a
+    starting point and didn't want to rename the files for fear of breaking the code.
+
+    For our two features beyond the required texture mapping, we chose to do fog
+    and a procedural texture. Both features can be enabled or disabled via a checkbox
+    below the canvas. 
+    
+    For the fog, the fog color is black so that the objects blend into the canvas.
+    It is easiest to see when the objects have different depths, and the near and
+    far clipping planes are tightly bound to the scene.
+
+    The procedural texture takes the s and t values used for texture coordinates
+    and runs them through trig functions to determine rbg values. An 
+    ever-increasing time value is also used to animate the texture. Disabling the
+    procedural texture will reveal the mars texture we used for part 1.
 -->
 <html>
   <head>
